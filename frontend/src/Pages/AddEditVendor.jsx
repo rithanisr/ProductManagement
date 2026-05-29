@@ -8,7 +8,6 @@ import { createVendor, getUsers, updateUser } from "../services/api";
 const AddEditVendor = () => {
   const { id } = useParams();
   const isEdit = Boolean(id);
-  const { user } = useAuth();
   const navigate = useNavigate();
   const [vendorForm, setVendorForm] = useState({
     name: "",

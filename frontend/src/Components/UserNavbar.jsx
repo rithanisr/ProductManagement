@@ -10,36 +10,18 @@ const UserNavbar = ({
   category,
   onCategory,
   status,
-  onStatus
+  onStatus,
 }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const [profileOpen, setProfileOpen] = useState(false);
-
-  const avatar = useMemo(
-    () =>
-      `https://ui-avatars.com/api/?name=${encodeURIComponent(
-        user?.name || "User"
-      )}&background=0D8ABC&color=fff`,
-    [user?.name]
-  );
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
 
   return (
     <div className="card shadow-sm rounded-4 border-0 mb-4">
       <div className="card-body">
         <div className="d-flex flex-column flex-lg-row align-items-start align-items-lg-center justify-content-between gap-3 mb-3">
           <div>
-            <div className="d-flex align-items-center gap-3 mb-2">
-              
-             
-            </div>
+            <div className="d-flex align-items-center gap-3 mb-2"></div>
           </div>
-
         </div>
 
         <FilterBar

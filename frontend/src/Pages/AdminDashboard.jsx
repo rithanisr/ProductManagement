@@ -11,34 +11,39 @@ import {
   getCategoryProducts,
   getProducts,
   getUsers,
-  updateCategory
+  updateCategory,
 } from "../services/api";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [categoryStats, setCategoryStats] = useState([]);
+  // const [categoryStats, setCategoryStats] = useState([]);
   const [stats, setStats] = useState({
     totalProducts: 0,
     activeProducts: 0,
-    outOfStockProducts: 0
+    outOfStockProducts: 0,
   });
   const [categoryName, setCategoryName] = useState("");
   const [vendorForm, setVendorForm] = useState({
     name: "",
     email: "",
-    password: ""
+    password: "",
   });
   const [editingCategory, setEditingCategory] = useState(null);
   const [loading, setLoading] = useState(true);
   const [savingCategory, setSavingCategory] = useState(false);
   const [savingVendor, setSavingVendor] = useState(false);
   const [error, setError] = useState("");
-  const [showVendorModal, setShowVendorModal] = useState(false);
 
-  const vendors = useMemo(() => users.filter((user) => user.role === "VENDOR"), [users]);
-  const customers = useMemo(() => users.filter((user) => user.role === "USER"), [users]);
+  const vendors = useMemo(
+    () => users.filter((user) => user.role === "VENDOR"),
+    [users],
+  );
+  const customers = useMemo(
+    () => users.filter((user) => user.role === "USER"),
+    [users],
+  );
 
   const loadDashboard = useCallback(async () => {
     setLoading(true);
@@ -50,17 +55,19 @@ const AdminDashboard = () => {
         productsResponse,
         activeProductsResponse,
         outOfStockProductsResponse,
-        categoriesResponse
+        categoriesResponse,
       ] = await Promise.all([
         getUsers(),
         getProducts({ page: 1, limit: 100, sort: "latest" }),
         getProducts({ page: 1, limit: 1, status: "ACTIVE" }),
         getProducts({ page: 1, limit: 1, status: "OUT_OF_STOCK" }),
-        getCategories()
+        getCategories(),
       ]);
 
       const categoryProductResponses = await Promise.all(
-        categoriesResponse.data.map((category) => getCategoryProducts(category.id))
+        categoriesResponse.data.map((category) =>
+          getCategoryProducts(category.id),
+        ),
       );
 
       setUsers(usersResponse.data);
@@ -69,17 +76,19 @@ const AdminDashboard = () => {
       setStats({
         totalProducts: productsResponse.data.totalProducts,
         activeProducts: activeProductsResponse.data.totalProducts,
-        outOfStockProducts: outOfStockProductsResponse.data.totalProducts
+        outOfStockProducts: outOfStockProductsResponse.data.totalProducts,
       });
-      setCategoryStats(
-        categoryProductResponses.map((response) => ({
-          id: response.data.id,
-          name: response.data.name,
-          totalProducts: response.data.products.length
-        }))
-      );
+      // setCategoryStats(
+      //   categoryProductResponses.map((response) => ({
+      //     id: response.data.id,
+      //     name: response.data.name,
+      //     totalProducts: response.data.products.length
+      //   }))
+      // );
     } catch (apiError) {
-      setError(apiError.response?.data?.error || "Failed to load admin dashboard");
+      setError(
+        apiError.response?.data?.error || "Failed to load admin dashboard",
+      );
     } finally {
       setLoading(false);
     }
@@ -94,93 +103,6 @@ const AdminDashboard = () => {
     setEditingCategory(null);
   };
 
-  const handleCategorySubmit = async (event) => {
-    event.preventDefault();
-    setError("");
-    setSavingCategory(true);
-
-    try {
-      if (editingCategory) {
-        await updateCategory(editingCategory.id, { name: categoryName });
-      } else {
-        await createCategory({ name: categoryName });
-      }
-
-      resetCategoryForm();
-      await loadDashboard();
-    } catch (apiError) {
-      setError(apiError.response?.data?.error || "Failed to save category");
-    } finally {
-      setSavingCategory(false);
-    }
-  };
-
-  const handleVendorChange = (event) => {
-    setVendorForm({
-      ...vendorForm,
-      [event.target.name]: event.target.value
-    });
-  };
-
-  const handleVendorSubmit = async (event) => {
-    event.preventDefault();
-    setError("");
-    setSavingVendor(true);
-
-    try {
-      await createVendor(vendorForm);
-      setVendorForm({
-        name: "",
-        email: "",
-        password: ""
-      });
-      await loadDashboard();
-    } catch (apiError) {
-      setError(apiError.response?.data?.error || "Failed to create vendor");
-    } finally {
-      setSavingVendor(false);
-    }
-  };
-
-  const handleEditCategory = (category) => {
-    setEditingCategory(category);
-    setCategoryName(category.name);
-  };
-
-  const handleDeleteCategory = async (categoryId) => {
-    const confirmed = window.confirm("Delete this category?");
-
-    if (!confirmed) {
-      return;
-    }
-
-    setError("");
-
-    try {
-      await deleteCategory(categoryId);
-      await loadDashboard();
-    } catch (apiError) {
-      setError(apiError.response?.data?.error || "Failed to delete category");
-    }
-  };
-
-  const handleDeleteUser = async (userId) => {
-    const confirmed = window.confirm("Delete this user?");
-
-    if (!confirmed) {
-      return;
-    }
-
-    setError("");
-
-    try {
-      await deleteUser(userId);
-      await loadDashboard();
-    } catch (apiError) {
-      setError(apiError.response?.data?.error || "Failed to delete user");
-    }
-  };
-
   if (loading) {
     return (
       <div className="container py-4">
@@ -190,8 +112,12 @@ const AdminDashboard = () => {
   }
 
   const totalProducts = stats.totalProducts || 0;
-  const activePct = totalProducts ? (stats.activeProducts / totalProducts) * 100 : 0;
-  const outOfStockPct = totalProducts ? (stats.outOfStockProducts / totalProducts) * 100 : 0;
+  const activePct = totalProducts
+    ? (stats.activeProducts / totalProducts) * 100
+    : 0;
+  const outOfStockPct = totalProducts
+    ? (stats.outOfStockProducts / totalProducts) * 100
+    : 0;
 
   return (
     <div className="container-fluid">
@@ -203,8 +129,6 @@ const AdminDashboard = () => {
               Monitor products, vendors and catalog health.
             </p>
           </div>
-
-        
         </div>
 
         <ErrorAlert message={error} />
@@ -217,7 +141,11 @@ const AdminDashboard = () => {
             <StatCard label="Vendors" value={vendors.length} tone="success" />
           </div>
           <div className="col">
-            <StatCard label="Products" value={stats.totalProducts} tone="dark" />
+            <StatCard
+              label="Products"
+              value={stats.totalProducts}
+              tone="dark"
+            />
           </div>
           <div className="col">
             <StatCard label="Active" value={stats.activeProducts} tone="info" />
@@ -230,7 +158,11 @@ const AdminDashboard = () => {
             />
           </div>
           <div className="col">
-            <StatCard label="Categories" value={categories.length} tone="secondary" />
+            <StatCard
+              label="Categories"
+              value={categories.length}
+              tone="secondary"
+            />
           </div>
         </div>
 
@@ -244,7 +176,9 @@ const AdminDashboard = () => {
                 <div className="admin-kpi-block mb-3">
                   <div className="admin-kpi-row">
                     <span>Active Products</span>
-                    <strong className="admin-kpi-number">{stats.activeProducts}</strong>
+                    <strong className="admin-kpi-number">
+                      {stats.activeProducts}
+                    </strong>
                   </div>
                   <div className="progress mt-2" style={{ height: "10px" }}>
                     <div
@@ -283,7 +217,9 @@ const AdminDashboard = () => {
                 {products.slice(0, 5).map((product) => (
                   <div key={product.id} className="admin-kpi-row mb-3">
                     <span className="admin-kpi-label">{product.name}</span>
-                    <strong className="admin-kpi-number">{product.stock} Sold</strong>
+                    <strong className="admin-kpi-number">
+                      {product.stock} Sold
+                    </strong>
                   </div>
                 ))}
               </div>
@@ -308,9 +244,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
-
       </div>
-
     </div>
   );
 };

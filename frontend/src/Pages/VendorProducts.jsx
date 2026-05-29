@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import ErrorAlert from "../Components/ErrorAlert";
 import LoadingState from "../Components/LoadingState";
-import ProductForm from "../Components/ProductForm";
 import VendorProductModal from "../Components/VendorProductModal";
 import {
   createVendorProduct,
   deleteVendorProduct,
   getCategories,
   getVendorProducts,
-  updateVendorProduct
+  updateVendorProduct,
 } from "../services/api";
 
 const initialFormState = {
@@ -17,7 +16,7 @@ const initialFormState = {
   price: "",
   stock: "",
   categoryName: "",
-  status: "ACTIVE"
+  status: "ACTIVE",
 };
 
 const VendorProducts = () => {
@@ -45,7 +44,7 @@ const VendorProducts = () => {
         limit: 100,
         sort: "latest",
         search: search || undefined,
-        status: statusFilter || undefined
+        status: statusFilter || undefined,
       });
       setProducts(response.data.products);
     } catch (apiError) {
@@ -89,7 +88,7 @@ const VendorProducts = () => {
       price: String(product.price || ""),
       stock: String(product.stock || ""),
       categoryName: product.category?.name || "",
-      status: product.status || "ACTIVE"
+      status: product.status || "ACTIVE",
     });
     setImageFile(null);
     setImagePreview(product.imageUrl || "");
@@ -105,7 +104,7 @@ const VendorProducts = () => {
       price: String(product.price || ""),
       stock: String(product.stock || ""),
       categoryName: product.category?.name || "",
-      status: product.status || "ACTIVE"
+      status: product.status || "ACTIVE",
     });
     setImagePreview(product.imageUrl || "");
     setEditingProduct(product);
@@ -125,7 +124,7 @@ const VendorProducts = () => {
   const handleChange = (event) => {
     setForm({
       ...form,
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
   };
 
@@ -191,8 +190,6 @@ const VendorProducts = () => {
     }
   };
 
-  const productCount = products.length;
-
   const filteredProducts = useMemo(() => {
     return products;
   }, [products]);
@@ -211,9 +208,15 @@ const VendorProducts = () => {
         <div className="d-flex justify-content-between align-items-start flex-column flex-md-row gap-3 mb-4">
           <div>
             <h2 className="h5 mb-1">Products</h2>
-            <p className="text-muted mb-0">Manage products that belong to your vendor account.</p>
+            <p className="text-muted mb-0">
+              Manage products that belong to your vendor account.
+            </p>
           </div>
-          <button className="btn btn-dark rounded-pill px-4" type="button" onClick={openAddModal}>
+          <button
+            className="btn btn-dark rounded-pill px-4"
+            type="button"
+            onClick={openAddModal}
+          >
             <span className="me-2">+</span>
             Add Product
           </button>
@@ -223,7 +226,6 @@ const VendorProducts = () => {
 
         <div className="card shadow-sm rounded-4 border-0 mb-4">
           <div className="card-body d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
-            
             <div className="d-flex gap-2 flex-wrap">
               <input
                 type="search"
@@ -275,7 +277,11 @@ const VendorProducts = () => {
                               <img
                                 src={product.imageUrl}
                                 alt={product.name}
-                                style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                }}
                               />
                             ) : (
                               product.name?.slice(0, 1)
@@ -283,28 +289,46 @@ const VendorProducts = () => {
                           </div>
                           <div>
                             <strong>{product.name}</strong>
-                            <small className="d-block text-muted">{product.description}</small>
+                            <small className="d-block text-muted">
+                              {product.description}
+                            </small>
                           </div>
                         </div>
                       </td>
                       <td>{product.category?.name || "Unassigned"}</td>
-                      <td className="text-end">{Number(product.price).toLocaleString()}</td>
+                      <td className="text-end">
+                        {Number(product.price).toLocaleString()}
+                      </td>
                       <td className="text-end">{product.stock}</td>
                       <td>
-                        <span className={`badge ${product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark"}`}>
+                        <span
+                          className={`badge ${product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark"}`}
+                        >
                           {product.status}
                         </span>
                       </td>
-                    
+
                       <td className="text-end">
                         <div className="d-flex justify-content-end gap-2 flex-wrap">
-                          <button className="btn btn-sm btn-outline-secondary" type="button" onClick={() => openViewModal(product)}>
+                          <button
+                            className="btn btn-sm btn-outline-secondary"
+                            type="button"
+                            onClick={() => openViewModal(product)}
+                          >
                             View
                           </button>
-                          <button className="btn btn-sm btn-outline-primary" type="button" onClick={() => openEditModal(product)}>
+                          <button
+                            className="btn btn-sm btn-outline-primary"
+                            type="button"
+                            onClick={() => openEditModal(product)}
+                          >
                             Edit
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" type="button" onClick={() => handleDeleteProduct(product.id)}>
+                          <button
+                            className="btn btn-sm btn-outline-danger"
+                            type="button"
+                            onClick={() => handleDeleteProduct(product.id)}
+                          >
                             Delete
                           </button>
                         </div>
@@ -319,7 +343,13 @@ const VendorProducts = () => {
 
         <VendorProductModal
           show={showModal}
-          title={viewOnly ? "View Product" : editingProduct ? "Edit Product" : "Add Product"}
+          title={
+            viewOnly
+              ? "View Product"
+              : editingProduct
+                ? "Edit Product"
+                : "Add Product"
+          }
           form={form}
           categories={categories}
           editingProduct={editingProduct}

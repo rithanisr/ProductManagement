@@ -16,13 +16,17 @@ const VendorStock = () => {
     setError("");
 
     try {
-      const response = await getVendorProducts({ page: 1, limit: 100, sort: "latest" });
+      const response = await getVendorProducts({
+        page: 1,
+        limit: 100,
+        sort: "latest",
+      });
       setProducts(response.data.products);
       setStockValues(
         response.data.products.reduce((acc, product) => {
           acc[product.id] = String(product.stock || 0);
           return acc;
-        }, {})
+        }, {}),
       );
     } catch (apiError) {
       setError(apiError.response?.data?.error || "Failed to load stock items");
@@ -37,8 +41,12 @@ const VendorStock = () => {
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      const matchesQuery = product.name.toLowerCase().includes(query.toLowerCase());
-      const matchesStatus = statusFilter ? product.status === statusFilter : true;
+      const matchesQuery = product.name
+        .toLowerCase()
+        .includes(query.toLowerCase());
+      const matchesStatus = statusFilter
+        ? product.status === statusFilter
+        : true;
       return matchesQuery && matchesStatus;
     });
   }, [products, query, statusFilter]);
@@ -46,7 +54,7 @@ const VendorStock = () => {
   const handleStockChange = (productId, value) => {
     setStockValues({
       ...stockValues,
-      [productId]: value
+      [productId]: value,
     });
   };
 
@@ -69,10 +77,6 @@ const VendorStock = () => {
     }
   };
 
-  const totalStock = products.reduce((sum, product) => sum + Number(product.stock || 0), 0);
-  const lowStockCount = products.filter((product) => product.stock <= 10 && product.stock > 0).length;
-  const outOfStockCount = products.filter((product) => product.stock === 0).length;
-
   if (loading) {
     return (
       <div className="container py-4">
@@ -87,7 +91,9 @@ const VendorStock = () => {
         <div className="d-flex justify-content-between align-items-start flex-column flex-md-row gap-3 mb-4">
           <div>
             <h2 className="h5 mb-1">Stock Items</h2>
-            <p className="text-muted mb-0">Update quantities, track low stock, and keep your catalog fresh.</p>
+            <p className="text-muted mb-0">
+              Update quantities, track low stock, and keep your catalog fresh.
+            </p>
           </div>
           <div className="d-flex gap-2 flex-wrap">
             <input
@@ -110,7 +116,6 @@ const VendorStock = () => {
         </div>
 
         <ErrorAlert message={error} />
-
 
         <div className="card shadow-sm rounded-4 border-0">
           <div className="table-responsive">
@@ -140,16 +145,28 @@ const VendorStock = () => {
                       <tr key={product.id}>
                         <td>
                           <strong>{product.name}</strong>
-                          <div className="small text-muted">{product.description}</div>
+                          <div className="small text-muted">
+                            {product.description}
+                          </div>
                         </td>
                         <td>{product.category?.name || "Unassigned"}</td>
                         <td>
-                          <span className={`badge ${product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark"}`}>
+                          <span
+                            className={`badge ${product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark"}`}
+                          >
                             {product.status}
                           </span>
                         </td>
                         <td className="text-end">
-                          <span className={isOut ? "text-danger" : isLow ? "text-warning" : "text-muted"}>
+                          <span
+                            className={
+                              isOut
+                                ? "text-danger"
+                                : isLow
+                                  ? "text-warning"
+                                  : "text-muted"
+                            }
+                          >
                             {product.stock}
                           </span>
                         </td>
@@ -161,7 +178,12 @@ const VendorStock = () => {
                               className="form-control form-control-sm"
                               style={{ width: "5.5rem" }}
                               value={stockValues[product.id] ?? ""}
-                              onChange={(event) => handleStockChange(product.id, event.target.value)}
+                              onChange={(event) =>
+                                handleStockChange(
+                                  product.id,
+                                  event.target.value,
+                                )
+                              }
                             />
                             <button
                               type="button"
