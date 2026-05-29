@@ -1,6 +1,3 @@
-import { useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import FilterBar from "./FilterBar";
 
 const UserNavbar = ({
@@ -12,8 +9,8 @@ const UserNavbar = ({
   status,
   onStatus,
 }) => {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
+
+ 
 
   return (
     <div className="card shadow-sm rounded-4 border-0 mb-4">

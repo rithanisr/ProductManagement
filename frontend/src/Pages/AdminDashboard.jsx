@@ -3,46 +3,33 @@ import ErrorAlert from "../Components/ErrorAlert";
 import LoadingState from "../Components/LoadingState";
 import StatCard from "../Components/StatCard";
 import {
-  createCategory,
-  createVendor,
-  deleteCategory,
-  deleteUser,
   getCategories,
-  getCategoryProducts,
   getProducts,
   getUsers,
-  updateCategory,
 } from "../services/api";
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  // const [categoryStats, setCategoryStats] = useState([]);
+
   const [stats, setStats] = useState({
     totalProducts: 0,
     activeProducts: 0,
     outOfStockProducts: 0,
   });
-  const [categoryName, setCategoryName] = useState("");
-  const [vendorForm, setVendorForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [editingCategory, setEditingCategory] = useState(null);
+
   const [loading, setLoading] = useState(true);
-  const [savingCategory, setSavingCategory] = useState(false);
-  const [savingVendor, setSavingVendor] = useState(false);
   const [error, setError] = useState("");
 
   const vendors = useMemo(
     () => users.filter((user) => user.role === "VENDOR"),
-    [users],
+    [users]
   );
+
   const customers = useMemo(
     () => users.filter((user) => user.role === "USER"),
-    [users],
+    [users]
   );
 
   const loadDashboard = useCallback(async () => {
@@ -64,30 +51,18 @@ const AdminDashboard = () => {
         getCategories(),
       ]);
 
-      const categoryProductResponses = await Promise.all(
-        categoriesResponse.data.map((category) =>
-          getCategoryProducts(category.id),
-        ),
-      );
-
       setUsers(usersResponse.data);
       setProducts(productsResponse.data.products);
       setCategories(categoriesResponse.data);
+
       setStats({
         totalProducts: productsResponse.data.totalProducts,
         activeProducts: activeProductsResponse.data.totalProducts,
         outOfStockProducts: outOfStockProductsResponse.data.totalProducts,
       });
-      // setCategoryStats(
-      //   categoryProductResponses.map((response) => ({
-      //     id: response.data.id,
-      //     name: response.data.name,
-      //     totalProducts: response.data.products.length
-      //   }))
-      // );
     } catch (apiError) {
       setError(
-        apiError.response?.data?.error || "Failed to load admin dashboard",
+        apiError.response?.data?.error || "Failed to load admin dashboard"
       );
     } finally {
       setLoading(false);
@@ -97,11 +72,6 @@ const AdminDashboard = () => {
   useEffect(() => {
     loadDashboard();
   }, [loadDashboard]);
-
-  const resetCategoryForm = () => {
-    setCategoryName("");
-    setEditingCategory(null);
-  };
 
   if (loading) {
     return (
@@ -115,6 +85,7 @@ const AdminDashboard = () => {
   const activePct = totalProducts
     ? (stats.activeProducts / totalProducts) * 100
     : 0;
+
   const outOfStockPct = totalProducts
     ? (stats.outOfStockProducts / totalProducts) * 100
     : 0;
@@ -141,11 +112,7 @@ const AdminDashboard = () => {
             <StatCard label="Vendors" value={vendors.length} tone="success" />
           </div>
           <div className="col">
-            <StatCard
-              label="Products"
-              value={stats.totalProducts}
-              tone="dark"
-            />
+            <StatCard label="Products" value={stats.totalProducts} tone="dark" />
           </div>
           <div className="col">
             <StatCard label="Active" value={stats.activeProducts} tone="info" />
@@ -184,7 +151,6 @@ const AdminDashboard = () => {
                     <div
                       className="progress-bar bg-success"
                       style={{ width: `${activePct}%` }}
-                      aria-label="Active products percentage"
                     />
                   </div>
                 </div>
@@ -200,7 +166,6 @@ const AdminDashboard = () => {
                     <div
                       className="progress-bar bg-warning"
                       style={{ width: `${outOfStockPct}%` }}
-                      aria-label="Out of stock percentage"
                     />
                   </div>
                 </div>
@@ -244,6 +209,7 @@ const AdminDashboard = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

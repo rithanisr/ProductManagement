@@ -1,4 +1,4 @@
-﻿import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import ErrorAlert from "../Components/ErrorAlert";
 import LoadingState from "../Components/LoadingState";
 import { createCategory, deleteCategory, getCategories, updateCategory } from "../services/api";

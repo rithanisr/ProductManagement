@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import ErrorAlert from "../Components/ErrorAlert";
 import LoadingState from "../Components/LoadingState";
 import { createVendor, getUsers, updateUser } from "../services/api";
