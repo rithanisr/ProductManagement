@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://productmanagement-i6wt.onrender.com",
+  baseURL: process.env.REACT_APP_BASE_URL,
 });
 
 api.interceptors.request.use((config) => {
