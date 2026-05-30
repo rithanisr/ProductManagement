@@ -1,5 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { useState } from "react";
 
 const SidebarIcon = ({ name }) => {
   const common = {
@@ -170,10 +171,20 @@ const SidebarIcon = ({ name }) => {
 const Sidebar = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
-  const handleLogout = () => {
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  const confirmLogout = () => {
     logout();
     navigate("/login");
+    setShowLogoutModal(false);
+  };
+
+  const cancelLogout = () => {
+    setShowLogoutModal(false);
   };
 
   const avatarSrc = `https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -221,6 +232,7 @@ const Sidebar = () => {
         <div className="sidebar-divider" />
 
         <nav className="nav flex-column gap-1">
+          {/* Your existing navigation links remain unchanged */}
           {user?.role !== "USER" && (
             <NavLink
               className={({ isActive }) =>
@@ -228,11 +240,7 @@ const Sidebar = () => {
                   isActive ? "bg-primary text-white" : "text-white"
                 }`
               }
-              to={
-                user?.role === "VENDOR"
-                  ? "/vendor/dashboard"
-                  : "/admin"
-              }
+              to={user?.role === "VENDOR" ? "/vendor/dashboard" : "/admin"}
             >
               <SidebarIcon name="dashboard" />
               Dashboard
@@ -267,7 +275,7 @@ const Sidebar = () => {
             </>
           )}
 
-            {user?.role === "USER" && (
+          {user?.role === "USER" && (
             <>
               <NavLink
                 className={({ isActive }) =>
@@ -332,42 +340,41 @@ const Sidebar = () => {
           )}
 
           {user?.role === "ADMIN" && (
-            <NavLink
-              className={({ isActive }) =>
-                `nav-link d-flex align-items-center gap-3 px-2 py-2 rounded-2 ${
-                  isActive ? "bg-primary text-white" : "text-white"
-                }`
-              }
-              to="/vendors"
-            >
-              <SidebarIcon name="vendors" />
-              <span>Vendors</span>
-            </NavLink>
-          )}
+            <>
+              <NavLink
+                className={({ isActive }) =>
+                  `nav-link d-flex align-items-center gap-3 px-2 py-2 rounded-2 ${
+                    isActive ? "bg-primary text-white" : "text-white"
+                  }`
+                }
+                to="/vendors"
+              >
+                <SidebarIcon name="vendors" />
+                <span>Vendors</span>
+              </NavLink>
 
-          {user?.role === "ADMIN" && (
-            <NavLink
-              className={({ isActive }) =>
-                `nav-link d-flex align-items-center gap-3 px-2 py-2 rounded-2 ${
-                  isActive ? "bg-primary text-white" : "text-white"
-                }`
-              }
-              to="/categories"
-            >
-              <SidebarIcon name="categories" />
-              <span>Category</span>
-            </NavLink>
+              <NavLink
+                className={({ isActive }) =>
+                  `nav-link d-flex align-items-center gap-3 px-2 py-2 rounded-2 ${
+                    isActive ? "bg-primary text-white" : "text-white"
+                  }`
+                }
+                to="/categories"
+              >
+                <SidebarIcon name="categories" />
+                <span>Category</span>
+              </NavLink>
+            </>
           )}
-
 
           {user?.role === "ADMIN" && (
             <>
-              <NavLink>
+              <NavLink className="nav-link d-flex align-items-center gap-3 px-2 py-2 rounded-2 text-white">
                 <SidebarIcon name="help" />
                 <span>Help &amp; Center</span>
               </NavLink>
 
-              <NavLink>
+              <NavLink className="nav-link d-flex align-items-center gap-3 px-2 py-2 rounded-2 text-white">
                 <SidebarIcon name="settings" />
                 <span>Settings</span>
               </NavLink>
@@ -382,7 +389,12 @@ const Sidebar = () => {
               <strong>{user?.name || "Admin User"}</strong>
               <small>{user?.email || "admin@producthub.com"}</small>
             </div>
-            <button className="sidebar-logout-icon" type="button" onClick={handleLogout} aria-label="Logout">
+            <button 
+              className="sidebar-logout-icon" 
+              type="button" 
+              onClick={handleLogoutClick} 
+              aria-label="Logout"
+            >
               <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
                 <path d="M10 17l5-5-5-5" />
@@ -392,6 +404,72 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
+
+      {/* Logout Confirmation Modal with Inline Styles */}
+      {showLogoutModal && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: "rgba(0, 0, 0, 0.65)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 9999,
+        }}>
+          <div style={{
+            backgroundColor: "white",
+            padding: "28px",
+            borderRadius: "12px",
+            width: "90%",
+            maxWidth: "360px",
+            textAlign: "center",
+            boxShadow: "0 15px 35px rgba(0, 0, 0, 0.2)",
+          }}>
+            <h3 style={{ margin: "0 0 12px 0", color: "#333", fontSize: "1.4rem" }}>
+              Confirm Logout
+            </h3>
+            <p style={{ margin: "0 0 24px 0", color: "#666", fontSize: "1rem" }}>
+              Are you sure you want to logout?
+            </p>
+
+            <div style={{ display: "flex", gap: "12px", justifyContent: "center" }}>
+              <button
+                onClick={cancelLogout}
+                style={{
+                  padding: "10px 24px",
+                  border: "1px solid #ccc",
+                  backgroundColor: "#f8f9fa",
+                  color: "#333",
+                  borderRadius: "8px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  flex: 1,
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmLogout}
+                style={{
+                  padding: "10px 24px",
+                  border: "none",
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  borderRadius: "8px",
+                  fontWeight: "500",
+                  cursor: "pointer",
+                  flex: 1,
+                }}
+              >
+                Yes, Logout
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </aside>
   );
 };
