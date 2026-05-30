@@ -36,7 +36,7 @@ const CartItem = ({ item, onQuantityChange, onRemove }) => {
               className="btn btn-sm btn-outline-danger"
               onClick={() => onRemove(product.id)}
             >
-              Remove
+              Delete
             </button>
           </div>
 
