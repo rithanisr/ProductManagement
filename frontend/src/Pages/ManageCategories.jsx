@@ -184,45 +184,95 @@ const ManageCategories = () => {
 </div>
       </div>
 
-      {showModal && (
-        <div className="modal-backdrop fade show d-flex align-items-center justify-content-center" style={{ zIndex: 1050 }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">{editingCategory ? "Edit Category" : "Add Category"}</h5>
-                <button type="button" className="btn-close" aria-label="Close" onClick={closeModal} />
-              </div>
-              <div className="modal-body">
-                <form onSubmit={handleSubmit}>
-                  <div className="mb-3">
-                    <label htmlFor="categoryName" className="form-label">
-                      Category Name
-                    </label>
-                    <input
-                      id="categoryName"
-                      name="categoryName"
-                      type="text"
-                      className="form-control"
-                      value={categoryName}
-                      onChange={(event) => setCategoryName(event.target.value)}
-                      required
-                      autoFocus
-                    />
-                  </div>
-                  <div className="d-flex justify-content-end gap-2">
-                    <button type="button" className="btn btn-outline-secondary" onClick={closeModal} disabled={savingCategory}>
-                      Cancel
-                    </button>
-                    <button type="submit" className="btn btn-dark" disabled={savingCategory}>
-                      {savingCategory ? "Saving..." : editingCategory ? "Update Category" : "Create Category"}
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
+{showModal && (
+  <div 
+    className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center" 
+    style={{ 
+        backgroundColor: "rgba(0,0,0,0.7)",
+    backdropFilter: "blur(4px)",
+    zIndex: 1050,
+    }}
+  >
+    <div 
+      className="modal-dialog modal-dialog-centered"
+      style={{ 
+        maxWidth: "720px",
+        width: "92%" 
+      }}
+    >
+      <div 
+        className="modal-content shadow-3xl border-0"
+        style={{ 
+           position: "relative",
+    background: "#fff",
+    borderRadius: "20px",
+    overflow: "hidden",
+    zIndex: 1060
+
+        }}
+      >
+        <div className="modal-header border-bottom px-5 py-4">
+          <h5 
+            className="modal-title fw-bold text-dark fs-4 mb-0"
+          >
+            {editingCategory ? "Edit Category" : "Add Category"}
+          </h5>
+          <button 
+            type="button" 
+            className="btn-close" 
+            aria-label="Close" 
+            onClick={closeModal} 
+          />
         </div>
-      )}
+        
+        <div className="modal-body p-5">
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label 
+                htmlFor="categoryName" 
+                className="form-label fw-semibold text-dark"
+              >
+                Category Name
+              </label>
+              <input
+                id="categoryName"
+                name="categoryName"
+                type="text"
+                className="form-control form-control-lg shadow-sm"
+                value={categoryName}
+                onChange={(event) => setCategoryName(event.target.value)}
+                required
+                autoFocus
+                style={{ 
+                  fontSize: "1.1rem",
+                  backgroundColor: "#ffffff"
+                }}
+              />
+            </div>
+
+            <div className="d-flex justify-content-end gap-3 pt-4">
+              <button 
+                type="button" 
+                className="btn btn-outline-secondary px-4 py-2.5"
+                onClick={closeModal} 
+                disabled={savingCategory}
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                className="btn btn-dark px-5 py-2.5"
+                disabled={savingCategory}
+              >
+                {savingCategory ? "Saving..." : editingCategory ? "Update Category" : "Create Category"}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 };

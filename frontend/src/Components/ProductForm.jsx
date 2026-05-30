@@ -8,17 +8,10 @@ const ProductForm = ({
   imagePreview,
   onSubmit,
   onCancel,
-  viewOnly = false
+  viewOnly = false,
 }) => {
   return (
     <div className="lux-card product-editor-card">
-      <div className="section-title">
-        <div>
-          <h2>{editingProduct ? "Edit Product" : "Product Editor"}</h2>
-          <p>{editingProduct ? "Update stock, status, and catalog details." : "Create a product in your catalog."}</p>
-        </div>
-      </div>
-
       <form onSubmit={onSubmit} encType="multipart/form-data">
         <div className="row g-3">
           <div className="col-12">
@@ -124,7 +117,10 @@ const ProductForm = ({
           {imagePreview ? (
             <div className="col-12">
               <label className="form-label">Image Preview</label>
-              <div className="border rounded p-2">
+              <div
+                className="border rounded p-2"
+                style={{ maxWidth: "50%", height: "auto" }}
+              >
                 <img
                   src={imagePreview}
                   alt="Product preview"
@@ -134,13 +130,17 @@ const ProductForm = ({
             </div>
           ) : null}
         </div>
-
-        <div className="d-flex gap-2 mt-4">
-          {!viewOnly ? (
-            <button className="btn btn-luxury flex-grow-1" type="submit" disabled={saving}>
-              {saving ? "Saving..." : editingProduct ? "Update Product" : "Add Product"}
+        <div className="d-flex justify-content-end gap-2 mt-4">
+          {!viewOnly && (
+            <button className="btn btn-dark" type="submit" disabled={saving}>
+              {saving
+                ? "Saving..."
+                : editingProduct
+                  ? "Update Product"
+                  : "Add Product"}
             </button>
-          ) : null}
+          )}
+
           <button className="btn btn-soft" type="button" onClick={onCancel}>
             {viewOnly ? "Close" : editingProduct ? "Cancel" : "Close"}
           </button>

@@ -32,7 +32,7 @@ const Vendors = () => {
 
   const vendors = useMemo(
     () => users.filter((userItem) => userItem.role === "VENDOR"),
-    [users]
+    [users],
   );
 
   const handleDeleteVendor = async (vendorId) => {
@@ -74,7 +74,6 @@ const Vendors = () => {
         <div className="d-flex justify-content-between align-items-start flex-column flex-md-row gap-3 mb-4">
           <div>
             <h2 className="h5 mb-1">Vendors</h2>
-            
           </div>
 
           {user?.role === "ADMIN" && (
@@ -90,86 +89,72 @@ const Vendors = () => {
 
         <ErrorAlert message={error} />
 
-        {/* <div className="card shadow-sm rounded-4 border-0 mb-4">
-          <div className="card-body py-3 px-4 d-flex flex-column flex-md-row justify-content-between gap-3 align-items-start align-items-md-center">
-            <div>
-              <h6 className="mb-1">Vendor count</h6>
-              <p className="mb-0 text-muted">{vendors.length} vendor{vendors.length === 1 ? "" : "s"} available</p>
-            </div>
-            <div className="text-muted small">
-              Admin-only actions are available in the table when signed in as an administrator.
-            </div>
+        <div className="card shadow-sm rounded-4 border-0 overflow-hidden">
+          <div className="table-responsive">
+            <table className="table table-hover align-middle mb-0">
+              <thead className="table-light">
+                <tr>
+                  <th className="ps-4">Name</th>
+                  <th>Email</th>
+                  <th>Created Date</th>
+
+                  {user?.role === "ADMIN" && (
+                    <th className="text-center" style={{ width: "140px" }}>
+                      Actions
+                    </th>
+                  )}
+                </tr>
+              </thead>
+
+              <tbody>
+                {vendors.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan={user?.role === "ADMIN" ? 4 : 3}
+                      className="text-center py-5 text-muted"
+                    >
+                      No vendors found.
+                    </td>
+                  </tr>
+                ) : (
+                  vendors.map((vendor) => (
+                    <tr key={vendor.id}>
+                      <td className="ps-4 fw-medium">{vendor.name}</td>
+
+                      <td>{vendor.email}</td>
+
+                      <td>{new Date(vendor.createdAt).toLocaleDateString()}</td>
+
+                      {user?.role === "ADMIN" && (
+                        <td>
+                          <div className="d-flex justify-content-center gap-2">
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
+                              style={{ width: "36px", height: "36px" }}
+                              onClick={() => handleEditVendor(vendor.id)}
+                            >
+                              <i className="bi bi-pencil-square"></i>
+                            </button>
+
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
+                              style={{ width: "36px", height: "36px" }}
+                              onClick={() => handleDeleteVendor(vendor.id)}
+                            >
+                              <i className="bi bi-trash"></i>
+                            </button>
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
           </div>
-        </div> */}
-
-       <div className="card shadow-sm rounded-4 border-0 overflow-hidden">
-  <div className="table-responsive">
-    <table className="table table-hover align-middle mb-0">
-      <thead className="table-light">
-        <tr>
-          <th className="ps-4">Name</th>
-          <th>Email</th>
-          <th>Created Date</th>
-
-          {user?.role === "ADMIN" && (
-            <th className="text-center" style={{ width: "140px" }}>
-              Actions
-            </th>
-          )}
-        </tr>
-      </thead>
-
-      <tbody>
-        {vendors.length === 0 ? (
-          <tr>
-            <td
-              colSpan={user?.role === "ADMIN" ? 4 : 3}
-              className="text-center py-5 text-muted"
-            >
-              No vendors found.
-            </td>
-          </tr>
-        ) : (
-          vendors.map((vendor) => (
-            <tr key={vendor.id}>
-              <td className="ps-4 fw-medium">{vendor.name}</td>
-
-              <td>{vendor.email}</td>
-
-              <td>
-                {new Date(vendor.createdAt).toLocaleDateString()}
-              </td>
-
-              {user?.role === "ADMIN" && (
-                <td>
-                  <div className="d-flex justify-content-center gap-2">
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-primary rounded-circle d-flex align-items-center justify-content-center"
-                      style={{ width: "36px", height: "36px" }}
-                      onClick={() => handleEditVendor(vendor.id)}
-                    >
-                      <i className="bi bi-pencil-square"></i>
-                    </button>
-
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-danger rounded-circle d-flex align-items-center justify-content-center"
-                      style={{ width: "36px", height: "36px" }}
-                      onClick={() => handleDeleteVendor(vendor.id)}
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
-                  </div>
-                </td>
-              )}
-            </tr>
-          ))
-        )}
-      </tbody>
-    </table>
-  </div>
-</div>
+        </div>
       </div>
     </div>
   );

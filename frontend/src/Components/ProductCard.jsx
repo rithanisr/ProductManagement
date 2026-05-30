@@ -1,18 +1,33 @@
 import { Link } from "react-router-dom";
+import WishlistButton from "./wishlisttoogle";
 
 const ProductCard = ({
   product,
   onAddToCart,
   onAddToWishlist,
+  onToggleWishlist,
   inCart,
-  inWishlist
+  inWishlist,
 }) => {
   const imageUrl =
+    product.imageUrl ||
     product.image ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(product.name || "Product")}&background=0D8ABC&color=fff&size=256`;
 
-  const statusClass = product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark";
-  const statusLabel = product.status === "ACTIVE" ? "Available" : "Out of stock";
+  const stock = Number(product.stock ?? 0);
+  let stockDisplay = "";
+  let stockClass = "";
+
+  if (stock === 0) {
+    stockDisplay = "Out of Stock";
+    stockClass = "text-danger fw-semibold";
+  } else if (stock < 10) {
+    stockDisplay = "Limited Stock";
+    stockClass = "text-warning fw-semibold";
+  } else {
+    stockDisplay = `Stock ${stock}`;
+    stockClass = "text-muted";
+  }
 
   return (
     <div className="card h-100 shadow-sm border-0">
@@ -24,12 +39,9 @@ const ProductCard = ({
           style={{ objectFit: "cover" }}
         />
       </div>
+
       <div className="card-body d-flex flex-column gap-3">
         <div>
-          <div className="d-flex align-items-center justify-content-between mb-2">
-            <span className={`badge ${statusClass}`}>{statusLabel}</span>
-            <span className="text-muted small">{product.category?.name || "Unassigned"}</span>
-          </div>
           <h5 className="card-title mb-2">{product.name}</h5>
           <p className="card-text text-muted small mb-0">
             {product.description || "No description available."}
@@ -38,12 +50,17 @@ const ProductCard = ({
 
         <div className="mt-auto">
           <div className="d-flex align-items-center justify-content-between mb-3">
-            <strong className="h6 mb-0">${Number(product.price || 0).toLocaleString()}</strong>
-            <small className="text-muted">Stock {product.stock ?? 0}</small>
+            <strong className="h6 mb-0">
+              Rs.{Number(product.price || 0).toLocaleString()}
+            </strong>
+            <span className={`small ${stockClass}`}>{stockDisplay}</span>
           </div>
 
           <div className="d-grid gap-2">
-            <Link to={`/user/products/${product.id}`} className="btn btn-outline-dark btn-sm">
+            <Link
+              to={`/user/products/${product.id}`}
+              className="btn btn-outline-dark btn-sm"
+            >
               View Product
             </Link>
 
@@ -52,32 +69,21 @@ const ProductCard = ({
                 type="button"
                 className="btn btn-dark btn-sm flex-grow-1"
                 onClick={() => onAddToCart(product)}
-                disabled={inCart || product.status !== "ACTIVE"}
+                disabled={inCart || stock === 0 || product.status !== "ACTIVE"}
               >
-                {inCart ? "In Cart" : "Add to Cart"}
+                {inCart
+                  ? "In Cart"
+                  : stock === 0
+                    ? "Out of Stock"
+                    : "Add to Cart"}
               </button>
-              <button
-                type="button"
-                className={`btn btn-sm d-flex align-items-center justify-content-center ${
-                  inWishlist ? "btn-danger text-white" : "btn-outline-secondary"
-                }`}
-                onClick={() => onAddToWishlist(product)}
-                disabled={inWishlist}
-                aria-label={inWishlist ? "In Wishlist" : "Add to Wishlist"}
-              >
-                <svg
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
-                  fill={inWishlist ? "currentColor" : "none"}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M20.8 4.6c-1.5-1.6-4-1.8-5.7-.5L12 6.1l-3.1-2c-1.7-1.3-4.2-1.1-5.7.5-1.8 1.9-1.8 5 0 6.8l8.8 8.9 8.8-8.9c1.8-1.8 1.8-4.9 0-6.8z" />
-                </svg>
-              </button>
+
+              <WishlistButton
+                product={product}
+                inWishlist={inWishlist}
+                onToggleWishlist={onToggleWishlist}
+                size="sm"
+              />
             </div>
           </div>
         </div>

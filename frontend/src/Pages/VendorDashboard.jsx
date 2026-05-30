@@ -1,12 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  PieChart,
-  Pie,
-  Tooltip,
-  ResponsiveContainer,
-  Cell
-} from "recharts";
+import { PieChart, Pie, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import ErrorAlert from "../Components/ErrorAlert";
 import LoadingState from "../Components/LoadingState";
 import StatCard from "../Components/StatCard";
@@ -18,17 +11,22 @@ const VendorDashboard = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const navigate = useNavigate();
 
   const loadProducts = useCallback(async () => {
     setLoading(true);
     setError("");
 
     try {
-      const response = await getVendorAnalytics({ page: 1, limit: 100, sort: "latest" });
+      const response = await getVendorAnalytics({
+        page: 1,
+        limit: 100,
+        sort: "latest",
+      });
       setProducts(response.data.products);
     } catch (apiError) {
-      setError(apiError.response?.data?.error || "Failed to load dashboard data");
+      setError(
+        apiError.response?.data?.error || "Failed to load dashboard data",
+      );
     } finally {
       setLoading(false);
     }
@@ -39,16 +37,23 @@ const VendorDashboard = () => {
   }, [loadProducts]);
 
   const totalProducts = products.length;
-  const totalStock = products.reduce((sum, product) => sum + Number(product.stock || 0), 0);
-  const activeProducts = products.filter((product) => product.status === "ACTIVE").length;
-  const outOfStockProducts = products.filter((product) => product.status === "OUT_OF_STOCK").length;
+  const totalStock = products.reduce(
+    (sum, product) => sum + Number(product.stock || 0),
+    0,
+  );
+  const activeProducts = products.filter(
+    (product) => product.status === "ACTIVE",
+  ).length;
+  const outOfStockProducts = products.filter(
+    (product) => product.status === "OUT_OF_STOCK",
+  ).length;
 
   const statusChartData = useMemo(
     () => [
       { name: "Active", value: activeProducts },
-      { name: "Out of Stock", value: outOfStockProducts }
+      { name: "Out of Stock", value: outOfStockProducts },
     ],
-    [activeProducts, outOfStockProducts]
+    [activeProducts, outOfStockProducts],
   );
 
   const categoryChartData = useMemo(() => {
@@ -61,10 +66,7 @@ const VendorDashboard = () => {
     return Object.entries(counts).map(([name, value]) => ({ name, value }));
   }, [products]);
 
-  const recentProducts = useMemo(
-    () => products.slice(0, 5),
-    [products]
-  );
+  const recentProducts = useMemo(() => products.slice(0, 5), [products]);
 
   if (loading) {
     return (
@@ -80,25 +82,46 @@ const VendorDashboard = () => {
         <div className="d-flex justify-content-between align-items-start flex-column flex-md-row gap-3 mb-4">
           <div>
             <h2 className="h5 mb-1">Vendor Dashboard</h2>
-            <p className="text-muted mb-0">Track your product health, stock levels, and analytics.</p>
+            <p className="text-muted mb-0">
+              Track your product health, stock levels, and analytics.
+            </p>
           </div>
-          <button className="btn btn-dark rounded-pill px-4" type="button" onClick={() => navigate("/vendor/products")}>Manage Products</button>
         </div>
 
         <ErrorAlert message={error} />
 
         <div className="row row-cols-1 row-cols-md-4 g-3 mb-4">
           <div className="col">
-            <StatCard label="Total Products" value={totalProducts} tone="primary" />
+            <StatCard
+              label="Total Products"
+              value={totalProducts}
+              tone="primary"
+              icon={<i className="bi bi-box-seam fs-1"></i>}
+            />
           </div>
           <div className="col">
-            <StatCard label="Total Stock" value={totalStock} tone="success" />
+            <StatCard
+              label="Total Stock"
+              value={totalStock}
+              tone="success"
+              icon={<i className="bi bi-inboxes-fill fs-1"></i>}
+            />
           </div>
           <div className="col">
-            <StatCard label="Active Products" value={activeProducts} tone="info" />
+            <StatCard
+              label="Active Products"
+              value={activeProducts}
+              tone="info"
+              icon={<i className="bi bi-check-circle-fill fs-1"></i>}
+            />
           </div>
           <div className="col">
-            <StatCard label="Out of Stock" value={outOfStockProducts} tone="warning" />
+            <StatCard
+              label="Out of Stock"
+              value={outOfStockProducts}
+              tone="warning"
+              icon={<i className="bi bi-exclamation-triangle-fill fs-1"></i>}
+            />
           </div>
         </div>
 
@@ -109,9 +132,19 @@ const VendorDashboard = () => {
               <div style={{ width: "100%", height: 240 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={statusChartData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={80} paddingAngle={4}>
+                    <Pie
+                      data={statusChartData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={50}
+                      outerRadius={80}
+                      paddingAngle={4}
+                    >
                       {statusChartData.map((entry, index) => (
-                        <Cell key={entry.name} fill={chartColors[index % chartColors.length]} />
+                        <Cell
+                          key={entry.name}
+                          fill={chartColors[index % chartColors.length]}
+                        />
                       ))}
                     </Pie>
                     <Tooltip />
@@ -127,7 +160,13 @@ const VendorDashboard = () => {
               <div style={{ width: "100%", height: 240 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
-                    <Pie data={categoryChartData} dataKey="value" nameKey="name" outerRadius={90} label />
+                    <Pie
+                      data={categoryChartData}
+                      dataKey="value"
+                      nameKey="name"
+                      outerRadius={90}
+                      label
+                    />
                     <Tooltip />
                   </PieChart>
                 </ResponsiveContainer>
@@ -167,18 +206,24 @@ const VendorDashboard = () => {
                             </div>
                             <div>
                               <strong>{product.name}</strong>
-                              <div className="small text-muted">{product.description}</div>
+                              <div className="small text-muted">
+                                {product.description}
+                              </div>
                             </div>
                           </div>
                         </td>
                         <td>{product.category?.name || "Unassigned"}</td>
                         <td className="text-end">{product.stock}</td>
                         <td>
-                          <span className={`badge ${product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark"}`}>
+                          <span
+                            className={`badge ${product.status === "ACTIVE" ? "bg-success" : "bg-warning text-dark"}`}
+                          >
                             {product.status}
                           </span>
                         </td>
-                        <td className="text-end">{Number(product.price).toLocaleString()}</td>
+                        <td className="text-end">
+                          {Number(product.price).toLocaleString()}
+                        </td>
                       </tr>
                     ))
                   )}

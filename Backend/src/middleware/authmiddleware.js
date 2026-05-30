@@ -6,7 +6,9 @@ const verifyToken = async (req, res, next) => {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ error: "Access denied. Token is required" });
+      return res
+        .status(401)
+        .json({ error: "Access denied. Token is required" });
     }
 
     if (!process.env.JWT_SECRET) {
@@ -18,8 +20,8 @@ const verifyToken = async (req, res, next) => {
 
     const user = await prisma.user.findUnique({
       where: {
-        id: decoded.id
-      }
+        id: decoded.id,
+      },
     });
 
     if (!user) {
@@ -34,5 +36,5 @@ const verifyToken = async (req, res, next) => {
 };
 
 module.exports = {
-  verifyToken
+  verifyToken,
 };

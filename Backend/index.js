@@ -12,7 +12,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Health check route for root
 app.get("/", (req, res) => {
   res.send("API is running!");
 });

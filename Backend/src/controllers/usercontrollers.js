@@ -2,7 +2,6 @@ const bcrypt = require("bcrypt");
 const prisma = require("../config/prisma");
 const { getPublicUser, registerUser } = require("../services/authservice");
 
-// GET ALL USERS
 const getUsers = async (req, res) => {
   try {
     const users = await prisma.user.findMany({
@@ -28,7 +27,6 @@ const getUsers = async (req, res) => {
   }
 };
 
-// CREATE USER
 const createUser = async (req, res) => {
   try {
     const result = await registerUser({

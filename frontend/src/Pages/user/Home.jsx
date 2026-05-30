@@ -7,7 +7,7 @@ import { useUserData } from "../../context/UserDataContext";
 import { getCategories, getProducts } from "../../services/api";
 
 const Home = () => {
-  const { cart, wishlist, addToCart, addToWishlist, loading: userLoading } = useUserData();
+  const { cart, wishlist, addToCart, addToWishlist, loading: userLoading, toggleWishlist } = useUserData();
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [search, setSearch] = useState("");
@@ -88,6 +88,7 @@ const Home = () => {
                 <ProductCard
                   product={product}
                   onAddToCart={addToCart}
+                  onToggleWishlist={toggleWishlist}
                   onAddToWishlist={addToWishlist}
                   inCart={cartIds.includes(product.id)}
                   inWishlist={wishlistIds.includes(product.id)}

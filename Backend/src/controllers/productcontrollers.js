@@ -49,7 +49,6 @@ const createProduct = async (req, res) => {
       });
     }
 
-    // Find category using category name
     const category = await prisma.category.findUnique({
       where: {
         name: categoryName.trim(),
@@ -113,8 +112,6 @@ const createProduct = async (req, res) => {
         status,
         imageUrl,
         vendorId: productVendorId,
-
-        // save category id internally
         categoryId: category.id,
       },
     });

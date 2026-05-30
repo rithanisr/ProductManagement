@@ -3,12 +3,12 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login, user } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -16,8 +16,21 @@ const Login = () => {
   const handleChange = (event) => {
     setFormData({
       ...formData,
-      [event.target.name]: event.target.value
+      [event.target.name]: event.target.value,
     });
+  };
+
+  const getRedirectPath = (role) => {
+    switch (role) {
+      case "ADMIN":
+        return "/admin";
+      case "VENDOR":
+        return "/vendor/dashboard";
+      case "USER":
+        return "/user/dashboard";
+      default:
+        return "/";
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -27,7 +40,10 @@ const Login = () => {
 
     try {
       await login(formData);
-      navigate(location.state?.from?.pathname || "/", { replace: true });
+
+      const redirectTo =
+        location.state?.from?.pathname || getRedirectPath(user?.role);
+      navigate(redirectTo, { replace: true });
     } catch (apiError) {
       setError(apiError.response?.data?.error || "Login failed");
     } finally {
@@ -47,7 +63,9 @@ const Login = () => {
 
               <form onSubmit={handleSubmit}>
                 <div className="mb-3">
-                  <label className="form-label" htmlFor="email">Email</label>
+                  <label className="form-label" htmlFor="email">
+                    Email
+                  </label>
                   <input
                     className="form-control"
                     id="email"
@@ -60,7 +78,9 @@ const Login = () => {
                 </div>
 
                 <div className="mb-3">
-                  <label className="form-label" htmlFor="password">Password</label>
+                  <label className="form-label" htmlFor="password">
+                    Password
+                  </label>
                   <input
                     className="form-control"
                     id="password"
@@ -72,7 +92,11 @@ const Login = () => {
                   />
                 </div>
 
-                <button className="btn btn-primary w-100" type="submit" disabled={loading}>
+                <button
+                  className="btn btn-primary w-100"
+                  type="submit"
+                  disabled={loading}
+                >
                   {loading ? "Logging in..." : "Login"}
                 </button>
               </form>

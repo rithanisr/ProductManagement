@@ -25,8 +25,10 @@ const VendorProducts = () => {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
+
   const [showModal, setShowModal] = useState(false);
   const [viewOnly, setViewOnly] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
@@ -43,7 +45,7 @@ const VendorProducts = () => {
         page: 1,
         limit: 100,
         sort: "latest",
-        search: search || undefined,
+        search: search.trim() || undefined,
         status: statusFilter || undefined,
       });
       setProducts(response.data.products);
@@ -69,7 +71,8 @@ const VendorProducts = () => {
 
   useEffect(() => {
     loadProducts();
-  }, [loadProducts]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const openAddModal = () => {
     setError("");
@@ -130,7 +133,6 @@ const VendorProducts = () => {
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0] || null;
-
     if (file) {
       setImageFile(file);
       setImagePreview(URL.createObjectURL(file));
@@ -175,19 +177,30 @@ const VendorProducts = () => {
 
   const handleDeleteProduct = async (productId) => {
     const confirmed = window.confirm("Delete this product?");
-
-    if (!confirmed) {
-      return;
-    }
+    if (!confirmed) return;
 
     setError("");
-
     try {
       await deleteVendorProduct(productId);
       await loadProducts();
     } catch (apiError) {
       setError(apiError.response?.data?.error || "Failed to delete product");
     }
+  };
+
+  const handleSearch = () => {
+    loadProducts();
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
+  const handleClearSearch = () => {
+    setSearch("");
+    setTimeout(() => loadProducts(), 100);
   };
 
   const filteredProducts = useMemo(() => {
@@ -225,24 +238,54 @@ const VendorProducts = () => {
         <ErrorAlert message={error} />
 
         <div className="card shadow-sm rounded-4 border-0 mb-4">
-          <div className="card-body d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3">
-            <div className="d-flex gap-2 flex-wrap">
-              <input
-                type="search"
-                className="form-control search-input"
-                placeholder="Search products"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-              />
-              <select
-                className="form-select"
-                value={statusFilter}
-                onChange={(event) => setStatusFilter(event.target.value)}
+          <div className="card-body">
+            <div className="d-flex flex-wrap gap-3 align-items-center">
+              <div
+                className="flex-grow-1 d-flex gap-2"
+                style={{ maxWidth: "420px" }}
               >
-                <option value="">All statuses</option>
-                <option value="ACTIVE">Active</option>
-                <option value="OUT_OF_STOCK">Out of stock</option>
-              </select>
+                <input
+                  type="search"
+                  className="form-control search-input rounded-end-0"
+                  placeholder="Search products..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                />
+                <button
+                  className="btn btn-primary rounded-start-0 px-4"
+                  type="button"
+                  onClick={handleSearch}
+                >
+                  Search
+                </button>
+              </div>
+
+              {search && (
+                <button
+                  className="btn btn-outline-secondary"
+                  type="button"
+                  onClick={handleClearSearch}
+                >
+                  Clear
+                </button>
+              )}
+
+              <div style={{ minWidth: "200px" }}>
+                <select
+                  className="form-select"
+                  value={statusFilter}
+                  onChange={(e) => {
+                    setStatusFilter(e.target.value);
+
+                    setTimeout(loadProducts, 50);
+                  }}
+                >
+                  <option value="">All statuses</option>
+                  <option value="ACTIVE">Active</option>
+                  <option value="OUT_OF_STOCK">Out of stock</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -263,7 +306,7 @@ const VendorProducts = () => {
               <tbody>
                 {filteredProducts.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="text-center py-4 text-muted">
+                    <td colSpan={6} className="text-center py-4 text-muted">
                       No products found.
                     </td>
                   </tr>
@@ -307,29 +350,30 @@ const VendorProducts = () => {
                           {product.status}
                         </span>
                       </td>
-
                       <td className="text-end">
                         <div className="d-flex justify-content-end gap-2 flex-wrap">
                           <button
                             className="btn btn-sm btn-outline-secondary"
-                            type="button"
                             onClick={() => openViewModal(product)}
+                            title="View Product"
                           >
-                            View
+                            <i className="bi bi-eye"></i>
                           </button>
+
                           <button
                             className="btn btn-sm btn-outline-primary"
-                            type="button"
                             onClick={() => openEditModal(product)}
+                            title="Edit Product"
                           >
-                            Edit
+                            <i className="bi bi-pencil-square"></i>
                           </button>
+
                           <button
                             className="btn btn-sm btn-outline-danger"
-                            type="button"
                             onClick={() => handleDeleteProduct(product.id)}
+                            title="Delete Product"
                           >
-                            Delete
+                            <i className="bi bi-trash"></i>
                           </button>
                         </div>
                       </td>

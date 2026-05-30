@@ -68,7 +68,7 @@ const Cart = () => {
                 </div>
                 <div className="d-flex justify-content-between mb-3">
                   <span>Total</span>
-                  <strong>${cartTotal.toLocaleString()}</strong>
+                  <strong>Rs.{cartTotal.toLocaleString()}</strong>
                 </div>
                 <button type="button" className="btn btn-dark w-100" onClick={handlePlaceOrder}>
                   Place Order

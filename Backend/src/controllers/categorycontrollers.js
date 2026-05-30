@@ -3,7 +3,7 @@ const {
   createCategoryRecord,
   updateCategoryById,
   deleteCategoryById,
-  getProductsByCategoryId
+  getProductsByCategoryId,
 } = require("../services/categoryservice");
 
 const getCategories = async (req, res) => {
@@ -33,7 +33,7 @@ const updateCategory = async (req, res) => {
 
     res.json({
       message: "Category updated successfully",
-      category
+      category,
     });
   } catch (error) {
     res.status(error.statusCode || 500).json({ error: error.message });
@@ -47,7 +47,7 @@ const deleteCategory = async (req, res) => {
     await deleteCategoryById(categoryId);
 
     res.status(200).json({
-      message: "Category deleted successfully"
+      message: "Category deleted successfully",
     });
   } catch (error) {
     res.status(error.statusCode || 500).json({ error: error.message });
@@ -70,5 +70,5 @@ module.exports = {
   createCategory,
   updateCategory,
   deleteCategory,
-  getCategoryProducts
+  getCategoryProducts,
 };

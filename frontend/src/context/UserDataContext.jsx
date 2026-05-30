@@ -189,6 +189,16 @@ export const UserDataProvider = ({ children }) => {
     () => cart.reduce((sum, item) => sum + Number(item.product.price || 0) * (item.quantity || 1), 0),
     [cart]
   );
+  const toggleWishlist = (product) => {
+  setWishlist(prev => {
+    const exists = prev.some(item => item.id === product.id);
+    if (exists) {
+      return prev.filter(item => item.id !== product.id);
+    } else {
+      return [...prev, product];
+    }
+  });
+};
 
   const value = {
     cart,
@@ -206,7 +216,8 @@ export const UserDataProvider = ({ children }) => {
     moveWishlistToCart,
     placeOrder,
     updateProfile,
-    loadData
+    loadData,
+    toggleWishlist
   };
 
   return <UserDataContext.Provider value={value}>{children}</UserDataContext.Provider>;
